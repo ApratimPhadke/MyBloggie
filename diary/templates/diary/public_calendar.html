@@ -1,0 +1,78 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2>{{ calendar_user.username|title }}'s Public Calendar</h2>
+            <form method="get" class="d-inline-block mb-2">
+                <select name="category" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+    {% if messages %}
+        <div class="row"><div class="col-12">
+            {% for message in messages %}
+                <div class="alert alert-warning">{{ message }}</div>
+            {% endfor %}
+        </div></div>
+    {% endif %}
+    {% if events %}
+        <div class="row">
+            {% for event in events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="Event Image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                        <p class="text-muted mb-1">Date: {{ event.date }}</p>
+                        <form method="post" action="{% url 'upvote_event' event.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success btn-sm">👍 Upvote ({{ event.upvotes.count }})</button>
+                        </form>
+                        <hr>
+                        <h6>Comments ({{ event.comments.count }})</h6>
+                        <ul class="list-unstyled mb-2" style="max-height:120px;overflow-y:auto;">
+                            {% for comment in event.comments.all %}
+                            <li class="mb-1"><strong>{{ comment.name }}</strong>: {{ comment.text }}</li>
+                            {% empty %}
+                            <li class="text-muted">No comments yet.</li>
+                            {% endfor %}
+                        </ul>
+                        <form method="post" action="{% url 'add_comment' event.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <div class="input-group input-group-sm mb-1">
+                                <input type="text" name="name" class="form-control" placeholder="Your name (optional)">
+                            </div>
+                            <div class="input-group input-group-sm mb-1">
+                                <input type="text" name="text" class="form-control" placeholder="Add a comment..." required>
+                            </div>
+                            <div class="input-group input-group-sm mb-1">
+                                <input type="text" name="captcha" class="form-control" placeholder="CAPTCHA: {{ captcha_question }}" required>
+                                <button type="submit" class="btn btn-primary">Comment</button>
+                            </div>
+                        </form>
+                        <form method="post" action="{% url 'set_reminder' event.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <div class="input-group input-group-sm mb-1">
+                                <input type="email" name="reminder_email" class="form-control" placeholder="Your email for reminder" required>
+                                <button type="submit" class="btn btn-warning">Remind Me</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center">No public events to show.</p>
+    {% endif %}
+</div>
+{% endblock %} 

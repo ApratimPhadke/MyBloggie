@@ -1,0 +1,24 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2>Notifications</h2>
+        </div>
+    </div>
+    {% if notifications %}
+        <ul class="list-group">
+        {% for notif in notifications %}
+            <li class="list-group-item {% if not notif.read %}list-group-item-info{% endif %}">
+                <span class="badge bg-secondary me-2">{{ notif.get_notif_type_display }}</span>
+                {{ notif.text }}
+                {% if notif.url %}<a href="{{ notif.url }}" class="ms-2">View</a>{% endif %}
+                <span class="float-end text-muted small">{{ notif.created_at|date:"M d, H:i" }}</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center">No notifications.</p>
+    {% endif %}
+</div>
+{% endblock %} 

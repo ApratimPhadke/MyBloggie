@@ -1,0 +1,28 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">Compose Message</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if recipient %}
+                            <div class="mb-2"><strong>To:</strong> <a href="{% url 'profile' recipient.username %}">{{ recipient.username }}</a></div>
+                        {% else %}
+                            <div class="mb-2">
+                                <label for="to_user">To (username):</label>
+                                <input type="text" name="to_user" id="to_user" class="form-control" required>
+                            </div>
+                        {% endif %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Send</button>
+                        <a href="{% url 'inbox' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

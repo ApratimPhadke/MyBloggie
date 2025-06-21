@@ -1,0 +1,37 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="mb-3">Sent Messages</h2>
+            <a href="{% url 'inbox' %}" class="btn btn-outline-secondary btn-sm mb-2">Inbox</a>
+        </div>
+    </div>
+    {% if messages_out %}
+        <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+            {% for msg in messages_out %}
+                <li class="list-group-item d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        {% if msg.recipient.profile.avatar %}
+                            <img src="{{ msg.recipient.profile.avatar.url }}" class="rounded-circle me-2" style="width:36px;height:36px;object-fit:cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary me-2" style="width:36px;height:36px;"></div>
+                        {% endif %}
+                        <div>
+                            <a href="{% url 'message_detail' msg.pk %}" class="fw-bold">{{ msg.recipient.username }}</a>
+                            <span class="text-muted small">{{ msg.text|truncatewords:10 }}</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <span class="text-muted small">{{ msg.sent_at|date:"M d, H:i" }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p class="text-center">No sent messages.</p>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,39 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="mb-3">Inbox</h2>
+            <a href="{% url 'compose_message' %}" class="btn btn-success btn-sm mb-2">Compose</a>
+            <a href="{% url 'sent_messages' %}" class="btn btn-outline-secondary btn-sm mb-2">Sent</a>
+        </div>
+    </div>
+    {% if messages_in %}
+        <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+            {% for msg in messages_in %}
+                <li class="list-group-item d-flex align-items-center justify-content-between {% if not msg.read %}list-group-item-info{% endif %}">
+                    <div class="d-flex align-items-center">
+                        {% if msg.sender.profile.avatar %}
+                            <img src="{{ msg.sender.profile.avatar.url }}" class="rounded-circle me-2" style="width:36px;height:36px;object-fit:cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary me-2" style="width:36px;height:36px;"></div>
+                        {% endif %}
+                        <div>
+                            <a href="{% url 'message_detail' msg.pk %}" class="fw-bold">{{ msg.sender.username }}</a>
+                            <span class="text-muted small">{{ msg.text|truncatewords:10 }}</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <span class="text-muted small">{{ msg.sent_at|date:"M d, H:i" }}</span>
+                        {% if not msg.read %}<span class="badge bg-primary ms-2">New</span>{% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p class="text-center">No messages.</p>
+    {% endif %}
+</div>
+{% endblock %} 

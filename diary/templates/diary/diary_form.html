@@ -1,0 +1,108 @@
+{% load static %}
+{% extends 'diary/layout.html' %}
+{% block content %}
+<style>
+.glass-card {
+    background: rgba(255,255,255,0.7);
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+    backdrop-filter: blur(8px);
+    border-radius: 2rem;
+    border: 1px solid rgba(255,255,255,0.18);
+    animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: none; }
+}
+.fancy-btn {
+    background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.75rem 2.5rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(108,99,255,0.12);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+.fancy-btn:hover {
+    background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+    box-shadow: 0 4px 16px rgba(252,92,125,0.18);
+}
+.floating-label input {
+    border-radius: 1.5rem;
+    padding: 1.25rem 1rem 0.5rem 1rem;
+    border: 1px solid #e0e0e0;
+    background: #f8fafc;
+}
+.floating-label label {
+    position: absolute;
+    left: 1.25rem;
+    top: 1.1rem;
+    color: #888;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: 0.2s;
+}
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+    top: 0.2rem;
+    left: 1rem;
+    font-size: 0.85rem;
+    color: #6a82fb;
+}
+.rounded-img {
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 12px rgba(108,99,255,0.10);
+    max-width: 220px;
+}
+</style>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="glass-card p-5">
+                <h2 class="mb-4 text-center fw-bold" style="letter-spacing:1px;">{{ edit|default:False|yesno:'Edit Entry,New Entry' }}</h2>
+                <form method="post" enctype="multipart/form-data" class="mt-2">
+                    {% csrf_token %}
+                    <div class="mb-4 floating-label position-relative">
+                        {{ form.title }}
+                        <label for="id_title">Title</label>
+                    </div>
+                    <div class="mb-4">
+                        {{ form.content.label_tag }}
+                        {{ form.content }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                        {% if form.instance.image %}
+                            <img src="{{ form.instance.image.url }}" class="rounded-img mt-3" alt="Diary Image">
+                        {% endif %}
+                    </div>
+                    <div class="mb-4">
+                        {{ form.collaborators.label_tag }}
+                        {{ form.collaborators }}
+                    </div>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="submit" class="fancy-btn">Save Entry</button>
+                        <a href="/" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'diary/tinymce.min.js' %}"></script>
+<script>
+  tinymce.init({
+    selector: 'textarea[name="content"]',
+    menubar: false,
+    plugins: 'lists link image code emoticons',
+    toolbar: 'undo redo | bold italic underline | bullist numlist | link image emoticons | code',
+    height: 300,
+    skin: 'oxide',
+    content_css: 'default',
+    branding: false,
+    content_style: 'body { background: #f8fafc; border-radius: 1rem; font-family: Segoe UI, Arial, sans-serif; font-size: 1.1rem; }'
+  });
+</script>
+{% endblock %} 

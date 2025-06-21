@@ -1,0 +1,18 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Message from <a href="{% url 'profile' msg.sender.username %}">{{ msg.sender.username }}</a> to <a href="{% url 'profile' msg.recipient.username %}">{{ msg.recipient.username }}</a></h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ msg.sent_at|date:"M d, Y H:i" }}</h6>
+                    <hr>
+                    <p class="card-text" style="white-space: pre-line;">{{ msg.text }}</p>
+                    <a href="{% url 'inbox' %}" class="btn btn-outline-secondary btn-sm mt-2">Back to Inbox</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

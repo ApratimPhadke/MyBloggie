@@ -1,0 +1,20 @@
+{% extends 'diary/layout.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg">
+        {% if diary.image %}
+            <img src="{{ diary.image.url }}" class="card-img-top" alt="Diary Image">
+        {% endif %}
+        <div class="card-body">
+            <h2 class="card-title">{{ diary.title }}</h2>
+            <p class="card-text">{{ diary.content|linebreaks }}</p>
+            <p><strong>Collaborators:</strong> {% for user in diary.collaborators.all %}{{ user.username }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</p>
+            <p><strong>Share this diary:</strong> <input type="text" class="form-control d-inline w-50" value="{{ request.build_absolute_uri }}" readonly></p>
+            {% if can_edit %}
+                <a href="{% url 'diary_edit' diary.pk %}" class="btn btn-primary">Edit</a>
+            {% endif %}
+            <a href="/" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
